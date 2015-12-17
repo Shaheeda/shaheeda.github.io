@@ -1,32 +1,72 @@
-<DOCTYPE HTML>
+<!Doctype html>
 <html>
 <head>
 
-<title></title>
-<style> 
-input:invalid{
+<title> Firechat</title>
 
-	border:3px solid red;
-}
-
-
-</style>
 </head>
 <body>
-<form id="myForm"  action="http://formspree.io/sshaheeda.khan@gmail.com" method="POST">
- Name: <input type="text" name="username"/> <br><br>
- Password:<input type ="password" name= "userpassword"/>
-      <br><br>
- Email: <input type="email" name"useremail" required/>
 
-      <input type="submit"/>
+	<form id='chatForm'>
+		<input type="text" name="message">
+		<input type = "submit">
 
+	</form>
+
+	<ul id='chats'></ul>
+
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+
+<script>
+var $chatForm = $('#chatForm');
+//want to set up some event listner on the chat form
+
+var $chats = $('#chats')
+var rootRef = new Firebase('https://dazzling-inferno-8532.firebaseio.com/') //ad database url
+
+  var messages = rootRef.child('messages');
+  var username ="Shaheeda";
+
+
+$chatForm.submit(function(event){
+   //send the chat to the data base
+
+    event.preventDefault();
+
+
+    var message = event.target.children.message.value;
+    
+    messages.push({
+
+      message:message,
+      username:username,
+      time:Date.now()
+
+    });
+   
+
+event.target.children.message.value = '';
+
+});
+
+
+messages.on('child_added' , function(snapshot) {
+
+console.log(snapshot.val());
+
+// add messages to the DOM element with chat text
+
+var $newChat = $('<li></li>');
+$newChat.text(snapshot.val().message);
+
+//add messages to the DOM
+
+$chats.append($newChat);
+
+});
+
+</script>
 </body>
-
-
-
-
-
-
-
 </html>
